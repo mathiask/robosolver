@@ -46,6 +46,6 @@ direction* moveTo(field f, location from, location to, unsigned max);
 // X . . . . X\
 // X         X\
 // X . . . . X\
-// XXXXXXXXXXX\
+// XXXXXXXXXXX
 field parse(const char *positionString);
 char *prettyPrint(field f);

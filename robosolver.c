@@ -43,9 +43,10 @@ direction* moveTo(field f, location from, location to, unsigned max);
 // robosolver <size> <pos> move <from> <direction>
 int main(int argc, const char** argv) {
     N = atoi(argv[1]);
-    field pos = strdup(argv[2]);
+    const char *pos = strdup(argv[2]);
     location from = atoi(argv[4]);
     direction d = atoi(argv[5]);
-    prettyPrint(doMove(parse(field), location, d));
+    field resultPos = doMove(parse(pos), from, d);
+    printf("%s\n", resultPos ? prettyPrint(resultPos) : "Illegal move!\n");
     return 0;
 }

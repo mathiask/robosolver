@@ -25,8 +25,22 @@ typedef unsigned char color;
 
 // Move from a location into a given direction.
 // Returns the field after the move.
-unsigned char* doMove(field f, location from, direction d);
+// NULL if the move is illegal
+field doMove(field f, location from, direction d);
 
 // Recursively from a location to another location with max moves.
 // Returns the path as NULL-terminated string of directions.
-unsigned char* moveTo(field f, location from, location to, unsigned max);
+direction* moveTo(field f, location from, location to, unsigned max);
+
+// Example:
+// XXXXXXXXXXX\
+// X .X. . . X\
+// X     X   X\
+// X . 2 . . X\
+// X         X\
+// X . . . . X\
+// X         X\
+// X . . . . X\
+// XXXXXXXXXXX\
+field parse(const char *positionString);
+char *prettyPrint(field f);

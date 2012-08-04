@@ -14,8 +14,8 @@
 #define COLOR(x) (((x) >> 4) & 0x07)
 #define WALLS(x) ((x) & 0x0f)
 
-#define X(location, N) ((location) % (N))
-#define Y(location, N) ((location) / (N))
+#define X(location) ((location) % (N))
+#define Y(location) ((location) / (N))
 #define xy(X, Y) ((Y)*N+(X))
 
 typedef unsigned char point;
@@ -42,6 +42,6 @@ direction* moveTo(field f, location from, location to, unsigned max);
 // X . . . . X\
 // X         X\
 // X . . . . X\
-// XXXXXXXXXXX\
+// XXXXXXXXXXX
 field parse(const char *positionString);
 char *prettyPrint(field f);

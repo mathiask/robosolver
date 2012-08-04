@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "robosolver.h"
 
 // The size of the field.
@@ -16,7 +17,8 @@ direction* moveTo(field f, location from, location to, unsigned max);
 // robosolver <size> <pos> <color> <destination>
 int main(int argc, const char** argv) {
     N = atoi(argv[1]);
-    field pos = strdup(argv[2]);
+    field pos = parse(argv[2]);
+    /* printf("%s\n", prettyPrint(pos)); */
     color col = atoi(argv[3]);
     location dest = atoi(argv[4]);
     return 0;

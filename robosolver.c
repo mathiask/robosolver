@@ -7,11 +7,11 @@ unsigned N = 0;
 
 // Move from a location into a given direction.
 // Returns the field after the move.
-unsigned char* doMove(field f, location from, direction d);
+field doMove(field f, location from, direction d);
 
 // Recursively from a location to another location with max moves.
 // Returns the path as NULL-terminated string of directions.
-unsigned char* moveTo(field f, location from, location to, unsigned max);
+direction* moveTo(field f, location from, location to, unsigned max);
 
 // robosolver <size> <pos> <color> <destination>
 int main(int argc, const char** argv) {

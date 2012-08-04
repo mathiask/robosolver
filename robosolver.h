@@ -14,8 +14,9 @@
 #define COLOR(x) (((x) >> 4) & 0x07)
 #define WALLS(x) ((x) & 0x0f)
 
-#define X(location, n) ((location) % (n))
-#define Y(location, n) ((lcoation) / (n))
+#define X(location, N) ((location) % (N))
+#define Y(location, N) ((location) / (N))
+#define xy(X, Y) ((Y)*N+(X))
 
 typedef unsigned char point;
 typedef unsigned char direction;

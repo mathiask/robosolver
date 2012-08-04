@@ -29,13 +29,12 @@ typedef unsigned char color;
 
 // Move from a location into a given direction.
 // The field is updated in place.
-// Returns the field after the move.
-// NULL if the move is illegal
-field doMove(field f, location from, direction d);
+// Returns the target location, -1 if the move is illegal
+int doMove(field f, location from, direction d);
 
 // Recursively from a location to another location with max moves.
-// Returns the path as NULL-terminated string of directions.
-direction* moveTo(field f, location from, location to, unsigned max);
+// Returns non-zero if a solution was found
+int moveTo(field f, location from, location to, unsigned max, direction *moves);
 
 // Example:
 // XXXXXXXXXXX\

@@ -8,9 +8,8 @@ unsigned N = 0;
 
 // Move from a location into a given direction.
 // The field is updated in place.
-// Returns the field after the move.
-// NULL if the move is illegal
-field doMove(field f, location from, direction d) {
+// Returns the target location, -1 if the move is illegal
+int doMove(field f, location from, direction d) {
   unsigned x = X(from);
   unsigned y = Y(from);
   color c = COLOR(f[from]);
@@ -32,26 +31,70 @@ field doMove(field f, location from, direction d) {
     y2 += dy;
   }
   if (x == X(from) && y == Y(from)) {
-    return NULL;
+    return -1;
   }
   f[from] = WALLS(f[from]);
   f[xy(x, y)] |= c << 4;
-  return f;
+  return xy(x, y);
+}
+
+field cloneField(field f) {
+  field clone = malloc(N*N+1);
+  memcpy(clone, f, N*N);
+  clone[N*N] = 0;
+  return clone;
 }
 
 // Recursively from a location to another location with max moves.
 // Returns the path as NULL-terminated string of directions.
-direction* moveTo(field f, location from, location to, unsigned max);
+int moveTo(field f, location from, location to, unsigned max, direction *moves) {
+  if (from == to) {
+    *moves = 0;
+    return 1;
+  }
+  if (max < 1) {
+    return 0;
+  }
+  for (int i = 0; i < 4; ++i) {
+
+    field f2 = cloneField(f);
+    int newFrom = doMove(f2, from, 1 << i);
+    *moves= 1<<i;
+    if (newFrom >= 0 && moveTo(f2, newFrom, to, max - 1, moves + 1)) {
+      free(f2);
+      return 1;
+    }
+    free(f2);
+  }
+  return 0;
+}
+
+void moveCommand(field f, location from, direction d) {
+  printf("%s\n", doMove(f, from, d) >= 0 ? prettyPrint(f) : "Illegal move!\n");
+}
+
+void toCommand(field f, location from, location to) {
+  direction moves[100];
+  if (moveTo(f, from, to, 10, moves)) {
+    for (direction *d = moves; *d; d++) {
+      printf("%d ", *d);
+    }
+    printf("\n");
+  } else {
+    printf("No solution!\n");
+  }
+}
 
 // robosolver <size> <pos> move <from> <direction>
+// robosolver <size> <pos> to <from> <to>
 int main(int argc, const char** argv) {
     N = atoi(argv[1]);
-    const char *pos = strdup(argv[2]);
-    location from = atoi(argv[4]);
-    direction d = atoi(argv[5]);
-    field f = parse(pos);
-    printf("%s\n", prettyPrint(f));
-    field resultPos = doMove(f, from, d);
-    printf("%s\n", resultPos ? prettyPrint(resultPos) : "Illegal move!\n");
+    field f = parse(strdup(argv[2]));
+    if (strcmp("move", argv[3]) == 0) {
+      moveCommand(f, atoi(argv[4]), atoi(argv[5]));
+    } else if (strcmp("to", argv[3]) == 0) {
+      toCommand(f, atoi(argv[4]), atoi(argv[5]));
+    }
+
     return 0;
 }

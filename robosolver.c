@@ -26,6 +26,8 @@ field doMove(field f, location from, direction d) {
   x2 = x + dx;
   y2 = y + dy;
   while (!(f[xy(x, y)] & d) && !COLOR(f[xy(x2, y2)])) {
+    x = x2;
+    y = y2;
     x2 += dx;
     y2 += dy;
   }
@@ -47,7 +49,9 @@ int main(int argc, const char** argv) {
     const char *pos = strdup(argv[2]);
     location from = atoi(argv[4]);
     direction d = atoi(argv[5]);
-    field resultPos = doMove(parse(pos), from, d);
+    field f = parse(pos);
+    printf("%s\n", prettyPrint(f));
+    field resultPos = doMove(f, from, d);
     printf("%s\n", resultPos ? prettyPrint(resultPos) : "Illegal move!\n");
     return 0;
 }

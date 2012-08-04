@@ -85,8 +85,18 @@ void toCommand(field f, location from, location to) {
   }
 }
 
+void findCommand(field f, color c) {
+  int loc = findColor(f, c);
+  if (loc < 0) {
+    printf("Not Found.\n");
+  } else {
+    printf("Color %d is at %d\n", c, loc);
+  }
+}
+
 // robosolver <size> <pos> move <from> <direction>
 // robosolver <size> <pos> to <from> <to>
+// robosolver <size> <pos> find <color>
 int main(int argc, const char** argv) {
     N = atoi(argv[1]);
     field f = parse(strdup(argv[2]));
@@ -94,6 +104,8 @@ int main(int argc, const char** argv) {
       moveCommand(f, atoi(argv[4]), atoi(argv[5]));
     } else if (strcmp("to", argv[3]) == 0) {
       toCommand(f, atoi(argv[4]), atoi(argv[5]));
+    } else if (strcmp("find", argv[3]) == 0) {
+      findCommand(f, atoi(argv[4]));
     }
 
     return 0;

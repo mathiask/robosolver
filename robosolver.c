@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include "robosolver.h"
 
 // The size of the field.
@@ -69,44 +69,43 @@ int moveTo(field f, location from, location to, unsigned max, direction *moves) 
   return 0;
 }
 
-void moveCommand(field f, location from, direction d) {
-  printf("%s\n", doMove(f, from, d) >= 0 ? prettyPrint(f) : "Illegal move!\n");
-}
-
-void toCommand(field f, location from, location to) {
-  direction moves[100];
-  if (moveTo(f, from, to, 10, moves)) {
-    for (direction *d = moves; *d; d++) {
-      printf("%d ", *d);
-    }
-    printf("\n");
-  } else {
-    printf("No solution!\n");
+direction oppositeDirection(direction d) {
+  switch (d) {
+  case NORTH: return SOUTH;
+  case SOUTH: return NORTH;
+  case WEST: return EAST;
+  case EAST: return WEST;
   }
 }
 
-void findCommand(field f, color c) {
-  int loc = findColor(f, c);
-  if (loc < 0) {
-    printf("Not Found.\n");
-  } else {
-    printf("Color %d is at %d\n", c, loc);
+int solve(field f, location *robot, location to, unsigned max, move *moves) {
+  //  printf("max: %d, to: %d, ls: %d,%d,%d,%d\n%s", max, (int)to, (int)robot[0], (int)robot[1], (int)robot[2], (int)robot[3], prettyPrint(f));
+  if (robot[0] == to) {
+    (moves+1)->d = 0;
+    return 1;
   }
-}
-
-// robosolver <size> <pos> move <from> <direction>
-// robosolver <size> <pos> to <from> <to>
-// robosolver <size> <pos> find <color>
-int main(int argc, const char** argv) {
-    N = atoi(argv[1]);
-    field f = parse(strdup(argv[2]));
-    if (strcmp("move", argv[3]) == 0) {
-      moveCommand(f, atoi(argv[4]), atoi(argv[5]));
-    } else if (strcmp("to", argv[3]) == 0) {
-      toCommand(f, atoi(argv[4]), atoi(argv[5]));
-    } else if (strcmp("find", argv[3]) == 0) {
-      findCommand(f, atoi(argv[4]));
-    }
-
+  if (max < 1) {
     return 0;
+  }
+  for (int i = 0; i < 4; ++i) {
+    for (int d = 0; d < 4; ++d) {
+      if (moves->c == i + 1 &&  moves->d == oppositeDirection(1 << d))
+        continue;
+      field f2 = cloneField(f);
+      location from = robot[i];
+      int target = doMove(f2, from, 1 << d);
+      if (target >= 0) {
+        (moves+1)->c = i + 1;
+        (moves+1)->d = 1<<d;
+        robot[i] = target;
+        if (solve(f2, robot, to, max - 1, moves + 1)) {
+          free(f2);
+          return 1;
+        }
+      }
+      free(f2);
+      robot[i] = from;
+    }
+  }
+  return 0;
 }

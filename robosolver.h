@@ -27,6 +27,11 @@ typedef unsigned char* field;
 typedef unsigned location;
 typedef unsigned char color;
 
+typedef struct move {
+  color c;
+  direction d;
+} move;
+
 // Move from a location into a given direction.
 // The field is updated in place.
 // Returns the target location, -1 if the move is illegal
@@ -43,3 +48,6 @@ char *prettyPrint(field f);
 
 // -1 when not found
 int findColor(field f, color c);
+
+// Solve the problem of moving robot 1 to target
+int solve(field f, location *robot, location to, unsigned max, move *moves);

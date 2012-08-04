@@ -41,3 +41,13 @@ char *prettyPrint(field f) {
     *s++ = '\0';
     return t;
 }
+
+// -1 when not found
+int findColor(field f, color c) {
+    for (location xy = 0; xy<N*N; xy++) {
+        if (COLOR(f[xy])==c)
+            return xy;
+    }
+
+    return -1;
+}

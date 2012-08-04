@@ -46,6 +46,6 @@ int main(int argc, const char** argv) {
     field pos = strdup(argv[2]);
     location from = atoi(argv[4]);
     direction d = atoi(argv[5]);
-    printf("%x\n", doMove(parse(field)), location, d);
+    prettyPrint(doMove(parse(field), location, d));
     return 0;
 }

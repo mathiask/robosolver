@@ -36,15 +36,10 @@ int doMove(field f, location from, direction d);
 // Returns non-zero if a solution was found
 int moveTo(field f, location from, location to, unsigned max, direction *moves);
 
-// Example:
-// XXXXXXXXXXX\
-// X .X. . . X\
-// X     X   X\
-// X . 2 . . X\
-// X         X\
-// X . . . . X\
-// X         X\
-// X . . . . X\
-// XXXXXXXXXXX
+// Read internal field representation from hex string.
 field parse(const char *positionString);
+
 char *prettyPrint(field f);
+
+// -1 when not found
+int findColor(field f, color c);

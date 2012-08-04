@@ -5,16 +5,7 @@
 
 extern unsigned N;
 
-// Example:
-// XXXXXXXXXXX\
-// X .X. . . X\
-// X     X   X\
-// X . 2 . . X\
-// X         X\
-// X . . . . X\
-// X         X\
-// X . . . . X\
-// XXXXXXXXXXX
+// Read internal field representation from hex string.
 field parse(const char *p) {
     field f=(field) malloc(N*N+1);
     char s[3];

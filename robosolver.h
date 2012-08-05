@@ -32,6 +32,14 @@ typedef struct move {
   direction d;
 } move;
 
+typedef struct hashEntry {
+    struct hashEntry* next;
+    unsigned char robots[4];
+    unsigned remainingDepth;
+} hashEntry;
+
+int lookup(location* robot, unsigned remainingDepth);
+
 // Move from a location into a given direction.
 // The field is updated in place.
 // Returns the target location, -1 if the move is illegal

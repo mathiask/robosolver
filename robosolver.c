@@ -84,9 +84,10 @@ int solve(field f, location *robot, location to, unsigned max, move *moves) {
     (moves+1)->d = 0;
     return 1;
   }
-  if (max < 1) {
-    return 0;
-  }
+
+  if (max < 1 || lookup(robot, max))
+      return 0;
+
   for (int i = 0; i < 4; ++i) {
     for (int d = 0; d < 4; ++d) {
       if (moves->c == i + 1 &&  moves->d == oppositeDirection(1 << d))

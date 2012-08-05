@@ -53,7 +53,7 @@ void solveCommand(field f, location to) {
   for (int depth = 1; depth < 20; depth++) {
     if (solve(f, robot, to, depth, moves)) {
       for (move *m = moves + 1; m->d; m++) {
-        printf("%d: %s\n", m->c, prettyDirection(m->d));
+        printf("%d: %s\n%s\n", m->c, prettyDirection(m->d), prettyPrint(f));
         doMove(f, findColor(f, m->c), m->d);
       }
       printf("Final position:\n%s\n", prettyPrint(f));

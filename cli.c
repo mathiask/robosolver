@@ -43,7 +43,12 @@ void solveCommand(field f, location to) {
   moves->c = 0;
   moves->d = 0;
   for (int i = 1; i <= 4; i++) {
-    robot[i - 1] = findColor(f, i);
+    int r = findColor(f, i);
+    if (r<0) {
+        printf("could not find robot %d\n", i);
+        exit(-1);
+    }
+    robot[i - 1] = r;
   }
   for (int depth = 1; depth < 20; depth++) {
     if (solve(f, robot, to, depth, moves)) {

@@ -9,6 +9,16 @@ const (
 	WEST
 )
 
+func OppositeDirection(d Direction) Direction {
+	switch (d) {
+	case NORTH: return SOUTH
+	case SOUTH: return NORTH
+	case WEST: return EAST
+	case EAST: return WEST
+	}
+	panic(d);
+}
+
 // One byte encoding the walls around the square in the bottom four bits
 // and the robot on the square in the top four bits.
 // (Robosolver's unused "point" type.)

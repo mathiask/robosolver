@@ -57,28 +57,21 @@ func ExampleDirection_west() {
 	// 8
 }
 
-// func TestMoveToWallOnEmptyBoard(t *testing.T) {
-// 	b := empty7by7Board()
-// 	txy := b.Location(3, 0)
-// 	if xy, ok := b.moveToWall(b.Location(3, 3), NORTH); txy != xy || !ok{
-// 		t.Errorf("Moved to %v (%v), expected %v", xy, ok, txy)
-// 	}
-// 	txy = b.Location(3, 6)
-// 	if xy, _ := b.moveToWall(b.Location(3, 3), SOUTH); txy != xy {
-// 		t.Errorf("Moved to %v, expected %v", xy, txy)
-// 	}
-// 	txy = b.Location(0, 3)
-// 	if xy, _ := b.moveToWall(b.Location(3, 3), WEST); txy != xy {
-// 		t.Errorf("Moved to %v, expected %v", xy, txy)
-// 	}
-// 	txy = b.Location(6, 3)
-// 	if xy, _ := b.moveToWall(b.Location(3, 3), EAST); txy != xy {
-// 		t.Errorf("Moved to %v, expected %v", xy, txy)
-// 	}
-// 	if _, ok := b.moveToWall(b.Location(6, 1), EAST); ok {
-// 		t.Error("Expected not OK")
-// 	}
-// }
+func ExampleBoard_MoveToWall_onEmptyBoard() {
+	b := empty7by7Board()
+	start := b.Location(3, 3)
+	fmt.Println(b.MoveToWall(start, NORTH)) // 0 + 3 = 3
+	fmt.Println(b.MoveToWall(start, SOUTH)) // 6 * 7 + 3 = 45
+	fmt.Println(b.MoveToWall(start, WEST))  // 3 * 7 + 0 = 21
+	fmt.Println(b.MoveToWall(start, EAST))  // 3 * 7 + 6 = 27
+	fmt.Println(b.MoveToWall(b.Location(6, 1), EAST))
+	// Output:
+	// 3 true
+	// 45 true
+	// 21 true
+	// 27 true
+	// 0 false
+}
 
 func empty7by7Board() *Board {
 	b := NewBoard(7)

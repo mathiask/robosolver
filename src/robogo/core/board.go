@@ -23,8 +23,8 @@ func EncodeColor(c byte) Square {
 	return Square(c << 4)
 }
 
-func Walls(s Square) byte {
-	return byte(s & 0x0f)
+func Walls(s Square) Square {
+	return s & 0x0f
 }
 
 // Let's hope the compiler optimizes this as NOP :-)
@@ -67,11 +67,21 @@ func (b *Board) Color(l Location) byte {
 // The board is updated in place and returns the target location if the
 // robot can make at least one step.
 // (Robosolver's doMove).
-func (b *Board) moveToWall(from Location, direction Direction) (Location, bool) {
+func (b *Board) MoveToWall(from Location, direction Direction) (Location, bool) {
 	delta := b.delta(direction)
-	for at := int(from) + delta; false; at += delta {}
-
-	return 0, true
+	to, next := from, Location(int(from) + delta)
+	for b.field[to] & Wall(direction) == 0 && Color(b.field[next]) == 0 {
+		to = next
+		next = Location(int(next) + delta)
+	}
+	if to == from {
+		return 0, false
+	}
+	old := b.field[from]
+	robot := Color(old)
+	b.field[from] = Walls(old) // remove robot
+	b.field[to] |= EncodeColor(robot)
+	return to, true
 }
 
 func (b *Board) delta(d Direction) int {

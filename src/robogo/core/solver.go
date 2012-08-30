@@ -66,5 +66,23 @@ func (p *Position) Solve(max uint) bool {
 // Lookup an make new entry if necessary.
 // Returns true to indicate that the position is known to be unsolvable.
 func lookup(m map[uint32]hashEntry, robot [4]Location, max uint) bool {
+	h := hash(robot)
+	entry, ok := m[h]
+	if !ok || entry.robot != robot {
+		m[h] = hashEntry{robot, max}
+		return false
+	}
+	if max <= entry.remainingDepth {
+		return true
+	}
+	entry.remainingDepth = max
 	return false
+}
+
+func hash(a [4]Location) uint32 {
+	var result uint32
+	for _, x := range a {
+		result = 37 * result + uint32(x)
+	}
+	return result & ((1 << 24) - 1)
 }

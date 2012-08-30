@@ -36,10 +36,18 @@ func Wall(d Direction) Square {
 type Board struct {
 	size uint
 	field []Square
+	undoBuffer []step
+}
+
+type step struct { from, to Location }
+
+func (s *step) reverse() *step {
+	s.from, s.to = s.to, s.from
+	return s
 }
 
 func NewBoard(n uint) *Board {
-	return &Board{n, make([]Square, n * n)}
+	return &Board{n, make([]Square, n * n), nil}
 }
 
 // Offset into the field slice.
@@ -68,20 +76,24 @@ func (b *Board) Color(l Location) byte {
 // robot can make at least one step.
 // (Robosolver's doMove).
 func (b *Board) MoveToWall(from Location, direction Direction) (Location, bool) {
+	to := b.findWall(from, direction)
+	if to == from {
+		return 0, false
+	}
+	step := step{from, to}
+	b.move(&step)
+	b.undoBuffer = append(b.undoBuffer, step)
+	return to, true
+}
+
+func (b *Board) findWall(from Location, direction Direction) Location {
 	delta := b.delta(direction)
 	to, next := from, Location(int(from) + delta)
 	for b.field[to] & Wall(direction) == 0 && Color(b.field[next]) == 0 {
 		to = next
 		next = Location(int(next) + delta)
 	}
-	if to == from {
-		return 0, false
-	}
-	old := b.field[from]
-	robot := Color(old)
-	b.field[from] = Walls(old) // remove robot
-	b.field[to] |= EncodeColor(robot)
-	return to, true
+	return to
 }
 
 func (b *Board) delta(d Direction) int {
@@ -91,5 +103,18 @@ func (b *Board) delta(d Direction) int {
 	case WEST: return -1
 	case EAST: return 1
 	}
-	return 0;
+	panic(d);
+}
+
+func (b *Board) move(s *step) {
+	old := b.field[s.from]
+	robot := Color(old)
+	b.field[s.from] = Walls(old) // remove robot
+	b.field[s.to] |= EncodeColor(robot)
+}
+
+func (b *Board) Undo() {
+	n := len(b.undoBuffer)
+	b.move(b.undoBuffer[n - 1].reverse())
+	b.undoBuffer = b.undoBuffer[:n-1]
 }

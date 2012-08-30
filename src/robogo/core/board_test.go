@@ -83,3 +83,17 @@ func empty7by7Board() *Board {
 	}
 	return b
 }
+
+func ExampleBoard_Undo() {
+	b := empty7by7Board()
+	*b.fieldAt(3, 3) |= EncodeColor(1)
+	b.MoveToWall(b.Location(3, 3), WEST)
+	b.MoveToWall(b.Location(0, 3), NORTH)
+	fmt.Println(b.field)
+	b.Undo()
+	b.Undo()
+	fmt.Println(b.field)
+	// Output:
+	// [25 1 1 1 1 1 3 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 12 4 4 4 4 4 6]
+	// [9 1 1 1 1 1 3 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 16 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 12 4 4 4 4 4 6]
+}

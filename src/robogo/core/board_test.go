@@ -74,14 +74,7 @@ func ExampleBoard_MoveToWall_onEmptyBoard() {
 }
 
 func empty7by7Board() *Board {
-	b := NewBoard(7)
-	for i := uint(0); i < 7; i++ {
-		*b.fieldAt(i, 0) |= Wall(NORTH)
-		*b.fieldAt(i, 6) |= Wall(SOUTH)
-		*b.fieldAt(0, i) |= Wall(WEST)
-		*b.fieldAt(6, i) |= Wall(EAST)
-	}
-	return b
+	return NewWalledBoard(7);
 }
 
 func ExampleBoard_Undo() {

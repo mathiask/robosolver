@@ -67,6 +67,18 @@ func (b *Board) fieldAt(x, y uint) *Square {
 	return &b.field[b.Location(x, y)]
 }
 
+// Empty board with walls around the otside.
+func NewWalledBoard(n uint) *Board {
+	b := Board{n, make([]Square, n * n), nil}
+	for i := uint(0); i < n; i++ {
+		*b.fieldAt(i, 0)     |= Wall(NORTH)
+		*b.fieldAt(i, n - 1) |= Wall(SOUTH)
+		*b.fieldAt(0, i)     |= Wall(WEST)
+		*b.fieldAt(n - 1, i) |= Wall(EAST)
+	}
+	return &b
+}
+
 func (b *Board) Color(l Location) byte {
 	return Color(b.field[l])
 }

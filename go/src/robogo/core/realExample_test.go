@@ -1,8 +1,9 @@
 package core
 
 import "fmt"
+import "testing"
 
-var b = NewWalledBoard(16)
+var b *Board
 
 //   09 01 01 03|09 01 01 01 01 03|09 01 01 01 01 03
 //
@@ -36,6 +37,19 @@ var b = NewWalledBoard(16)
 //         --
 //   0c 04 05 06|0c 04 04 04 04 04 06|0c 04 04 04 06
 func ExampleSolve() {
+	setupExample()
+	p := NewPosition(b, 22)
+	ok := p.Solve(10)
+	fmt.Println(ok)
+	fmt.Println(p.move[1:])
+	// Output:
+	// true
+	// [{1 1} {1 8} {1 1} {1 2} {1 4} {4 1} {4 8} {4 1} {1 1} {1 8}]
+
+}
+
+func setupExample() {
+	b = NewWalledBoard(16)
 	addRightOf(3, 0)
 	addRightOf(9, 0)
 	addRightOf(5, 1)
@@ -83,20 +97,10 @@ func ExampleSolve() {
 	addRightOf(8, 14)
 	addRightOf(3, 15)
 	addRightOf(10, 15)
-
 	*b.fieldAt(10, 12) |= EncodeColor(4)
 	*b.fieldAt(11, 12) |= EncodeColor(3)
 	*b.fieldAt(12, 12) |= EncodeColor(1)
 	*b.fieldAt(13, 12) |= EncodeColor(2)
-
-	p := NewPosition(b, 22)
-	ok := p.Solve(10)
-	fmt.Println(ok)
-	fmt.Println(p.move[1:])
-	// Output:
-	// true
-	// [{1 1} {1 8} {1 1} {1 2} {1 4} {4 1} {4 8} {4 1} {1 1} {1 8}]
-
 }
 
 func addRightOf(x, y uint) {
@@ -107,4 +111,11 @@ func addRightOf(x, y uint) {
 func addBelow(x, y uint) {
 	*b.fieldAt(x, y) |= Wall(SOUTH)
 	*b.fieldAt(x, y + 1) |= Wall(NORTH)
+}
+
+func BenchmarkSolve(bench *testing.B) {
+	setupExample()
+	p := NewPosition(b, 22)
+	p.Solve(10)
+	fmt.Println(p.move[1:])
 }

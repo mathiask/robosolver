@@ -122,7 +122,7 @@ div.box15 {
 <body>
 <div class="main">
 <h1>Robogo</h1>
-<h2>A “RoboRally” solver in Go</h2>
+<h2>A “Ricochet Robots” solver in Go</h2>
 <h3>Kai Tomerius &amp; Mathias Kegelmann</h3>
 {{ range . }}
   <div><!--

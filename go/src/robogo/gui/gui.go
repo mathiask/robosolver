@@ -37,9 +37,22 @@ const testTemplateHTML = `
 <!-- <script src="scripts/some-script.js"> -->
 <!-- </script> -->
 <style type="text/css">
+body {
+  font-family: Trebuchet MS, sans-serif;
+  margin-left: auto; margin-right: auto;
+  min-width: 100px; max-width: 800px;
+  background-color: white;
+}
 div {
   margin: 0px;
   padding: 0px;
+}
+div.main {
+  padding: 2ex;
+  background-color: #ccccff;
+  color: #27408b;
+  border: 2px solid gray;
+  border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px;
 }
 div.box {
   display: inline-block;
@@ -106,14 +119,18 @@ div.box15 {
 </style>
 </head>
 <body>
-<h1>Test</h1>
+<div class="main">
+<h1>Robogo</h1>
+<h2>A “RoboRally” solver in Go</h2>
+<h3>Kai Tomerius &amp; Mathias Kegelmann</h3>
 {{ range . }}
   <div><!--
   {{ range . }}
-    --><div class="box box{{.}}">{{ . }}</div><!--
+    --><div class="box box{{.}}">&nbsp;</div><!--
   {{ end }}
   --></div>
 {{ end }}
+</div>
 </body>
 </html>
 `

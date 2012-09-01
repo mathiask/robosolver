@@ -1,7 +1,9 @@
 package core
 
-import "testing"
-import "fmt"
+import (
+	"testing"
+	"fmt"
+)
 
 func TestBoardConstructor(t *testing.T) {
 	const n, n2 = 5, 25

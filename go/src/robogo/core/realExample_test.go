@@ -1,7 +1,9 @@
 package core
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 var b *Board
 

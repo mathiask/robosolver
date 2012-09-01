@@ -16,10 +16,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func board(b *core.Board) [][]core.Square {
-    result := make([][]core.Square, 16)
-    for y := uint(0); y < 16; y++ {
-        result[y] = make([]core.Square, 16)
-        for x := uint(0); x < 16; x++ {
+	n := b.Size()
+    result := make([][]core.Square, n)
+    for y := uint(0); y < n; y++ {
+        result[y] = make([]core.Square, n)
+        for x := uint(0); x < n; x++ {
             result[y][x] = b.WallsAt(x, y)
         }
     }

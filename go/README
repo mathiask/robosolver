@@ -1,0 +1,6 @@
+To compile Go programs "by hand", the current path has to be in GOPATH.
+   (e.g. in eshell run "export GOPATH=${pwd}")
+
+To run AppEngine:
+- simply run "[python] dev_appserver.py src" from this directory
+  - on Windows you *must* use a native (non-cygwin) Python

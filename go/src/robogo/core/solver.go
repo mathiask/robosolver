@@ -86,3 +86,5 @@ func hash(a [4]Location) uint32 {
 	}
 	return result & ((1 << 24) - 1)
 }
+
+// Public functions for GUI

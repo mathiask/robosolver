@@ -30,12 +30,16 @@ func NewPosition(b *Board, target Location) *Position {
 		make(map[uint32]hashEntry),
 	}
 	p.move[0] = Move {}
-	for i, x := range b.field {
+	findRobots(&p)
+	return &p
+}
+
+func findRobots(p *Position) {
+	for i, x := range p.board.field {
 		if c := Color(x); c > 0 {
 			p.robot[c - 1] = Location(i)
 		}
 	}
-	return &p
 }
 
 func (p *Position) Solve(max uint) bool {
@@ -92,9 +96,9 @@ func hash(a [4]Location) uint32 {
 // Public functions for GUI
 
 func (p *Position)Move() []string {
-	result := make([]string, len(p.move))
+	result := make([]string, len(p.move) - 1)
 	for i, m := range p.move[1:] {
-		result[i] = fmt.Sprintf("%v: %s", m.color, directionName(m.direction))
+		result[i] = fmt.Sprintf("%v:%s", m.color, directionName(m.direction))
 	}
 	return result
 }
@@ -107,4 +111,12 @@ func directionName(d Direction) string {
 	case EAST: return "east"
 	}
 	panic(d);
+}
+
+// Reset board, recompute robot locations and truncate move slice.
+// Target and hash are unchanged.
+func (p *Position)Reset(robots *[4][2]uint) {
+	p.board.Reset(robots)
+	p.move = p.move[0:1]
+	findRobots(p)
 }

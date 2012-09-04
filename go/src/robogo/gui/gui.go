@@ -2,10 +2,13 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 	"net/http"
-	"robogo/core"
 	"html/template"
+	"robogo/core"
 )
+
+const MAX_DEPTH = 15
 
 type Cell struct {
 	Walls core.Square
@@ -43,12 +46,17 @@ func solveHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Sscanf(r.FormValue("target"), "%v_%v", &tx, &ty)
 	b := core.StandardBoard().Reset(robots)
 	p := core.NewPosition(b, b.Location(tx, ty))
-	fmt.Fprintf(w, solve(p))
+	fmt.Fprintf(w, solve(p, robots))
 }
 
-func solve(p *core.Position) string {
-	p.Solve(10)
-	return fmt.Sprintf("%v", p.Move())
+func solve(p *core.Position, robots *[4][2]uint) string {
+	for depth := uint(2); depth <= MAX_DEPTH; depth++ {
+		if p.Solve(depth) {
+			return strings.Join(p.Move(), ", ")
+			p.Reset(robots)
+		}
+	}
+	return fmt.Sprintf("No solution found at depth %v!", MAX_DEPTH)
 }
 
 var mainTemplate = template.Must(template.New("test").Parse(mainTemplateHTML))
@@ -58,8 +66,57 @@ const mainTemplateHTML = `
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<!-- <script src="scripts/some-script.js"> -->
-<!-- </script> -->
+<script src="static/scripts/jquery-1.7.2.min.js">
+</script>
+<script src="static/scripts/jquery-ui-1.8.18.custom.min.js">
+</script>
+<script>
+$(function(){
+  var robogo = {
+	  positions: {}
+	},
+	solutionDiv = $("#solution"),
+	positionsComplete = function() {
+	  var p = robogo.positions;
+	  if (!p["target"]) return false;
+	  for (var i = 1; i <= 4; i++) {
+		if (!p["robot" + i]) return false;
+	  }
+	  return true;
+	},
+	showSolving = function() {
+	  solutionDiv.text("Solving...");
+	},
+	solve = function() {
+	  $.get("solve", robogo.positions, function(data) {
+		solutionDiv.text(data);
+	  });
+	};
+  solutionDiv.ajaxError(function() {
+	$(this).text( "AJAX error!" );
+  });
+  $("img").draggable({revert: "invalid"});
+  $(".box").droppable({drop: function(event, ui) {
+	  var target = $(this),
+		id = ui.draggable.attr("id");
+	  if (robogo.positions[id]) {
+		$("#" + robogo.positions[id]).droppable("option", "disabled", false);
+	  }
+	  robogo.positions[id] = this.id;
+	  ui.draggable.detach().css({top: 0, left: 0}).appendTo(target);
+	  $("#" + this.id).droppable("option", "disabled", true);
+	},
+	hoverClass: "ui-state-hover"});
+  $("button").click(function(){
+	if (positionsComplete()) {
+	  showSolving();
+	  solve();
+	} else {
+	  alert("Please place target and all robots!");
+	}
+  });
+});
+</script>
 <style type="text/css">
 body {
   font-family: Trebuchet MS, sans-serif;
@@ -80,11 +137,13 @@ div.main {
 }
 div.box {
   display: inline-block;
+  vertical-align: bottom;
   width: 35px;
   height: 35px;
   border: 5px solid white;
   background-color: #EEE;
 }
+div.ui-state-hover { background-color: #CFC; }
 div.box0 {}
 div.box1 { border-top: 5px solid blue; }
 div.box2 { border-right: 5px solid blue; }
@@ -140,37 +199,34 @@ div.box15 {
   border-bottom: 5px solid blue;
   border-left: 5px solid blue;
 }
+button { margin: 2ex 0px 2ex 0px; }
 </style>
 </head>
 <body>
 <div class="main">
 <h1>Robogo</h1>
 <h2>A “Ricochet Robots” solver in Go</h2>
+<div>
 {{ range . }}
   <div><!--
   {{ range . }}
-	--><div class="box box{{.Walls}}" id="{{.Id}}">&nbsp;</div><!--
+	--><div class="box box{{.Walls}}" id="{{.Id}}"></div><!--
   {{ end }}
   --></div>
 {{ end }}
 </div>
 <div>
-  <img id="target" src="static/images/s.png">
+  <img id="target" src="static/images/s.png" alt="T" title="drag me">
 </div>
 <div>
-  <img id="robot1" src="static/images/r1.png">
-  <img id="robot2" src="static/images/r2.png">
-  <img id="robot3" src="static/images/r3.png">
-  <img id="robot4" src="static/images/r4.png">
+  <img id="robot1" src="static/images/r1.png" alt="1" title="drag me">
+  <img id="robot2" src="static/images/r2.png" alt="2" title="drag me">
+  <img id="robot3" src="static/images/r3.png" alt="3" title="drag me">
+  <img id="robot4" src="static/images/r4.png" alt="4" title="drag me">
 </div>
-<form action="solve">
-<p><input type="text" name="target"></p>
-<input type="text" name="robot1">
-<input type="text" name="robot2">
-<input type="text" name="robot3">
-<input type="text" name="robot4">
-<input type="submit" value="Solve">
-</form>
+<button>Solve!</button>
+<div id="solution"/>
+</div>
 </body>
 </html>
 `

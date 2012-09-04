@@ -154,7 +154,15 @@ div.box15 {
   --></div>
 {{ end }}
 </div>
-<img src="static/images/stern.png">
+<div>
+  <img id="target" src="static/images/s.png">
+</div>
+<div>
+  <img id="robot1" src="static/images/r1.png">
+  <img id="robot2" src="static/images/r2.png">
+  <img id="robot3" src="static/images/r3.png">
+  <img id="robot4" src="static/images/r4.png">
+</div>
 <form action="solve">
 <p><input type="text" name="target"></p>
 <input type="text" name="robot1">

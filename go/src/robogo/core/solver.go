@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 type Move struct {
 	color byte
 	direction Direction
@@ -88,3 +90,21 @@ func hash(a [4]Location) uint32 {
 }
 
 // Public functions for GUI
+
+func (p *Position)Move() []string {
+	result := make([]string, len(p.move))
+	for i, m := range p.move[1:] {
+		result[i] = fmt.Sprintf("%v: %s", m.color, directionName(m.direction))
+	}
+	return result
+}
+
+func directionName(d Direction) string {
+	switch (d) {
+	case NORTH: return "north"
+	case SOUTH: return "south"
+	case WEST: return "west"
+	case EAST: return "east"
+	}
+	panic(d);
+}

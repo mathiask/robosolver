@@ -1,36 +1,59 @@
 package gui
 
 import (
-//    "fmt"
-    "net/http"
-    "robogo/core"
-    "html/template"
+	"fmt"
+	"net/http"
+	"robogo/core"
+	"html/template"
 )
 
+type Cell struct {
+	Walls core.Square
+	Id string
+}
+
 func init() {
-    http.HandleFunc("/", handler)
+	http.HandleFunc("/", mainHandler)
+	http.HandleFunc("/solve", solveHandler)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-    testTemplate.Execute(w, board(core.StandardBoard()))
+func mainHandler(w http.ResponseWriter, r *http.Request) {
+	mainTemplate.Execute(w, board(core.StandardBoard()))
 }
 
-func board(b *core.Board) [][]core.Square {
+func board(b *core.Board) [][]Cell {
 	n := b.Size()
-    result := make([][]core.Square, n)
-    for y := uint(0); y < n; y++ {
-        result[y] = make([]core.Square, n)
-        for x := uint(0); x < n; x++ {
-            result[y][x] = b.WallsAt(x, y)
-        }
-    }
-    return result
+	result := make([][]Cell, n)
+	for y := uint(0); y < n; y++ {
+		result[y] = make([]Cell, n)
+		for x := uint(0); x < n; x++ {
+			result[y][x] = Cell{ b.WallsAt(x, y), fmt.Sprintf("%v_%v", x, y) }
+		}
+	}
+	return result
 }
 
+func solveHandler(w http.ResponseWriter, r *http.Request) {
+	robots := new([4][2]uint)
+	for i := 0; i < 4; i++ {
+		fmt.Sscanf(r.FormValue(fmt.Sprintf("robot%v", i + 1)),
+			"%v_%v", &robots[i][0], &robots[i][1])
+	}
+	var tx, ty uint
+	fmt.Sscanf(r.FormValue("target"), "%v_%v", &tx, &ty)
+	b := core.StandardBoard().Reset(robots)
+	p := core.NewPosition(b, b.Location(tx, ty))
+	fmt.Fprintf(w, solve(p))
+}
 
-var testTemplate = template.Must(template.New("test").Parse(testTemplateHTML))
+func solve(p *core.Position) string {
+	p.Solve(10)
+	return fmt.Sprintf("%v", p.Move())
+}
 
-const testTemplateHTML = `
+var mainTemplate = template.Must(template.New("test").Parse(mainTemplateHTML))
+
+const mainTemplateHTML = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,15 +146,23 @@ div.box15 {
 <div class="main">
 <h1>Robogo</h1>
 <h2>A “Ricochet Robots” solver in Go</h2>
-<h3>Kai Tomerius &amp; Mathias Kegelmann</h3>
 {{ range . }}
   <div><!--
   {{ range . }}
-    --><div class="box box{{.}}">&nbsp;</div><!--
+	--><div class="box box{{.Walls}}" id="{{.Id}}">&nbsp;</div><!--
   {{ end }}
   --></div>
 {{ end }}
 </div>
+<img src="static/images/stern.png">
+<form action="solve">
+<p><input type="text" name="target"></p>
+<input type="text" name="robot1">
+<input type="text" name="robot2">
+<input type="text" name="robot3">
+<input type="text" name="robot4">
+<input type="submit" value="Solve">
+</form>
 </body>
 </html>
 `

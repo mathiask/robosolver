@@ -150,3 +150,12 @@ func (b *Board) Size() uint {
 func (b *Board) WallsAt(x, y uint) Square {
     return Walls(*b.fieldAt(x, y))
 }
+
+// Set robots to defined positions.
+func (b *Board) Reset(robots *[4][2]uint) *Board {
+	for i := range b.field { b.field[i] = Walls(b.field[i]) }
+	for i := byte(0); i < 4; i++ {
+		*b.fieldAt(robots[i][0], robots[i][1]) |= EncodeColor(i + 1)
+	}
+	return b
+}

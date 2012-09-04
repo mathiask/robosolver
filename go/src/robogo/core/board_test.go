@@ -92,3 +92,12 @@ func ExampleBoard_Undo() {
 	// [25 1 1 1 1 1 3 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 12 4 4 4 4 4 6]
 	// [9 1 1 1 1 1 3 8 0 0 0 0 0 2 8 0 0 0 0 0 2 8 0 0 16 0 0 2 8 0 0 0 0 0 2 8 0 0 0 0 0 2 12 4 4 4 4 4 6]
 }
+
+func ExampleBoard_Reset() {
+	b := NewBoard(3)
+	*b.fieldAt(1, 1) |= EncodeColor(1)
+	b.Reset(&[4][2]uint{{0, 0}, {1, 0}, {2, 0}, {3, 0}})
+	fmt.Println(b.field)
+	// Output:
+	// [16 32 48 64 0 0 0 0 0]
+}

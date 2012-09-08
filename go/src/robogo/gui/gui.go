@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"html/template"
 	"robogo/core"
-	"appengine"
 )
 
 const MAX_DEPTH = 15
@@ -16,7 +15,7 @@ type Cell struct {
 	Id string
 }
 
-func init() {
+func Init() {
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/solve", solveHandler)
 }
@@ -47,19 +46,19 @@ func solveHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Sscanf(r.FormValue("target"), "%v_%v", &tx, &ty)
 	b := core.StandardBoard().Reset(robots)
 	p := core.NewPosition(b, b.Location(tx, ty))
-	fmt.Fprintf(w, solve(p, robots, appengine.NewContext(r)))
+	fmt.Fprintf(w, solve(p, robots))
 }
 
-func solve(p *core.Position, robots *[4][2]uint, ctx appengine.Context) string {
+func solve(p *core.Position, robots *[4][2]uint) string {
 	for depth := uint(2); depth <= MAX_DEPTH; depth++ {
-		ctx.Infof("Solving with max depth %v...", depth);
+		fmt.Printf("Solving with max depth %v...\n", depth);
 		if p.Solve(depth) {
-			ctx.Infof("Solved!");
+			fmt.Printf("Solved!\n");
 			return strings.Join(p.Move(), ", ")
 		}
 		p.Reset(robots)
 	}
-	ctx.Infof("Search aborted!");
+	fmt.Printf("Search aborted!\n");
 	return fmt.Sprintf("No solution found at depth %v!", MAX_DEPTH)
 }
 
